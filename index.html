@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Πρόταση Πτυχιακής — Ανίχνευση NFC Relay Attacks</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; font-size: 14px; color: #222; background: #f5f7fa; overflow-x: hidden; }
+  .page { max-width: 900px; margin: 30px auto; background: #fff; padding: 60px 70px; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+
+  img, svg, video, canvas { max-width: 100%; height: auto; }
+  h1, h2, h3, p, li, th, td, .quote, .alert { overflow-wrap: anywhere; }
+
+  /* Cover */
+  .cover { text-align: center; padding: 60px 0 80px; border-bottom: 3px solid #1E406E; margin-bottom: 50px; }
+  .cover .uni { color: #666; font-size: 13px; margin-bottom: 6px; }
+  .cover .label { color: #1E406E; font-size: 15px; margin: 30px 0 12px; font-weight: 600; }
+  .cover h1 { color: #1E406E; font-size: 28px; line-height: 1.4; margin-bottom: 40px; }
+  .cover .meta { color: #444; font-size: 13px; line-height: 2; }
+
+  /* Headings */
+  h2 { color: #1E406E; font-size: 20px; margin: 40px 0 8px; padding-bottom: 6px; border-bottom: 2px solid #1E406E; }
+  h3 { color: #2E609E; font-size: 16px; margin: 28px 0 8px; }
+
+  /* Text */
+  p { line-height: 1.8; margin-bottom: 12px; color: #333; }
+  .quote { font-style: italic; color: #1E406E; background: #EEF3FB; padding: 14px 18px; border-left: 4px solid #1E406E; border-radius: 4px; margin: 14px 0; }
+
+  /* Alert box */
+  .alert { background: #FFF3CD; border-left: 4px solid #FFC107; padding: 14px 18px; border-radius: 4px; margin: 16px 0; }
+  .alert strong { color: #854D00; }
+
+  /* Bullets */
+  ul { margin: 10px 0 14px 24px; }
+  ul li { margin-bottom: 8px; line-height: 1.7; }
+  ol { margin: 10px 0 14px 24px; }
+  ol li { margin-bottom: 8px; line-height: 1.7; }
+
+  /* Code block */
+  pre { background: #F2F2F2; border: 1px solid #ddd; border-radius: 6px; padding: 16px 20px; font-family: 'Courier New', monospace; font-size: 12px; color: #1E406E; overflow-x: auto; margin: 14px 0; line-height: 1.6; white-space: pre; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 13px; }
+  th { background: #1E406E; color: #fff; padding: 10px 14px; text-align: left; }
+  td { padding: 9px 14px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+  tr:nth-child(even) td { background: #EEF3FB; }
+  tr:hover td { background: #dce8f7; }
+
+  /* Phase table accent */
+  .phase-table th { background: #2E609E; }
+
+  /* Concept table */
+  .concept td:first-child { font-weight: bold; color: #1E406E; white-space: nowrap; }
+
+  /* Footer */
+  .footer { text-align: center; color: #999; font-size: 12px; font-style: italic; margin-top: 60px; padding-top: 20px; border-top: 1px solid #ddd; }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    body { font-size: 15px; }
+    .page { width: calc(100% - 20px); margin: 10px auto; padding: 18px 14px 22px; max-width: none; }
+    .cover { padding: 24px 0 30px; margin-bottom: 24px; }
+    .cover h1 { font-size: 20px; line-height: 1.35; margin-bottom: 14px; }
+    .cover .label { font-size: 13px; margin: 14px 0 8px; }
+    .cover .uni { font-size: 12px; }
+    .cover .meta { font-size: 12px; line-height: 1.7; }
+    h2 { font-size: 17px; margin: 24px 0 6px; }
+    h3 { font-size: 15px; margin: 16px 0 6px; }
+    p { margin-bottom: 10px; line-height: 1.7; }
+    .quote { padding: 10px 12px; margin: 10px 0; }
+    .alert { padding: 10px 12px; margin: 10px 0; }
+    ul, ol { margin: 8px 0 12px 18px; }
+    ul li, ol li { margin-bottom: 6px; }
+    pre {
+      padding: 10px 12px;
+      font-size: 10.5px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      overflow-x: hidden;
+    }
+    table {
+      width: 100%;
+      table-layout: fixed;
+      display: table;
+      font-size: 11.5px;
+      white-space: normal;
+    }
+    th, td {
+      padding: 7px 8px;
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+    .concept td:first-child { white-space: normal; }
+    .footer { margin-top: 32px; padding-top: 12px; font-size: 11px; }
+  }
+
+  @media (max-width: 480px) {
+    .page { width: calc(100% - 12px); margin: 6px auto; padding: 14px 10px 18px; }
+    .cover h1 { font-size: 18px; }
+    pre { font-size: 10px; }
+    th, td { padding: 6px; }
+  }
+
+  /* Print */
+  @media print {
+    body { background: #fff; }
+    .page { box-shadow: none; margin: 0; padding: 40px 50px; }
+    h2 { page-break-before: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="uni">Τμήμα Μηχανικής Ηλεκτρονικών Υπολογιστών, Τηλεπικοινωνιών και Πληροφορικής</div>
+    <div class="uni">Πανεπιστήμιο Τεχνολογίας Κύπρου (CUT)</div>
+    <div class="label">Πρόταση Πτυχιακής Εργασίας</div>
+    <h1>Υβριδική Ανίχνευση Επιθέσεων NFC Relay<br>σε Ανέπαφα Συστήματα Πληρωμών<br>με Συνδυασμό Κανόνων και Τεχνητής Νοημοσύνης</h1>
+    <div class="meta">
+      Φοιτητής: &nbsp;<strong>Marios Mesaritis</strong><br>
+      Επιβλέπων Καθηγητής: &nbsp;<strong>Παναγιώτης Ηλίας</strong><br>
+      Απρίλιος 2026
+    </div>
+  </div>
+
+  <!-- 1. ΓΕΝΙΚΟΣ ΣΚΟΠΟΣ -->
+  <h2>1. Γενικός Σκοπός της Πτυχιακής</h2>
+  <p>Σκοπός της παρούσας πτυχιακής εργασίας είναι η ανάπτυξη ενός <strong>υβριδικού συστήματος ανίχνευσης επιθέσεων NFC relay</strong> σε ανέπαφα συστήματα πληρωμών, όπως το Apple Pay και το Google Pay. Το σύστημα συνδυάζει rule-based μεθόδους με τεχνικές Τεχνητής Νοημοσύνης για να εντοπίζει ύποπτες συναλλαγές σε πραγματικό χρόνο — <strong>πριν αυτές εγκριθούν και εκτελεστούν.</strong></p>
+  <p>Η αρχιτεκτονική αποτελείται από πέντε επίπεδα: συλλογή δεδομένων, rule-based engine, AI detection engine, risk scoring module και επίπεδο απόφασης. Κάθε συναλλαγή αξιολογείται σε milliseconds και λαμβάνει ένα ενοποιημένο risk score που καθορίζει αν θα επιτραπεί, επισημανθεί ή αποκλειστεί.</p>
+
+  <div class="quote">"Πώς μπορούμε να εντοπίσουμε αυτόματα επιθέσεις NFC relay σε ανέπαφα συστήματα πληρωμών, χρησιμοποιώντας συνδυασμό κανόνων και ML, χωρίς να επιβαρύνουμε την εμπειρία του χρήστη;"</div>
+
+  <h3>Σύνδεση με Μαθήματα Σπουδών</h3>
+  <ul>
+    <li><strong>Ασφάλεια Δικτύων &amp; Επικοινωνιών</strong> — NFC πρωτόκολλα, threat modeling, relay attack mechanics</li>
+    <li><strong>Μηχανική Μάθηση</strong> — Isolation Forest, Random Forest για anomaly detection και classification</li>
+    <li><strong>Συστήματα Πληρωμών</strong> — EMV πρωτόκολλο, contactless payment flow, transaction latency</li>
+    <li><strong>Ανάλυση Δεδομένων</strong> — Συνθετική παραγωγή dataset, feature engineering, αξιολόγηση μοντέλων</li>
+  </ul>
+
+  <!-- 2. ΠΡΟΒΛΗΜΑ -->
+  <h2>2. Πρόβλημα &amp; Threat Model</h2>
+  <p>Τα ανέπαφα συστήματα πληρωμών χρησιμοποιούν NFC (Near Field Communication) για γρήγορες συναλλαγές σε απόσταση έως 4cm. Ωστόσο, μια <strong>επίθεση NFC relay</strong> επιτρέπει σε έναν επιτιθέμενο να αναμεταδίδει την επικοινωνία μεταξύ μιας νόμιμης συσκευής και ενός τερματικού πληρωμών, εξαπατώντας το σύστημα ότι η κάρτα βρίσκεται κοντά, ενώ στην πραγματικότητα μπορεί να είναι χιλιόμετρα μακριά.</p>
+
+  <div class="alert">
+    <strong>⚠ ΠΑΡΑΔΕΙΓΜΑ ΕΠΙΘΕΣΗΣ</strong><br>
+    Ο επιτιθέμενος A στέκεται κοντά στο θύμα (π.χ. σε μετρό). Ο επιτιθέμενος B στέκεται μπροστά σε ένα POS terminal. Η επικοινωνία μεταξύ κάρτας θύματος και POS αναμεταδίδεται wirelessly — η συναλλαγή εγκρίνεται χωρίς η κάρτα να είναι ποτέ κοντά στο terminal.
+  </div>
+
+  <h3>Γιατί τα Υπάρχοντα Συστήματα Αποτυγχάνουν</h3>
+  <ul>
+    <li><strong>Rule-based μόνο:</strong> Εντοπίζουν γνωστά patterns αλλά αδυνατούν να ανιχνεύσουν εξελιγμένες ή νέες παραλλαγές επιθέσεων</li>
+    <li><strong>AI-only μόνο:</strong> Ανιχνεύουν λεπτές ανωμαλίες αλλά με υψηλό false positive rate — αποκλείουν νόμιμες συναλλαγές</li>
+    <li><strong>Έλλειψη real-time ανάλυσης:</strong> Τα περισσότερα συστήματα ανιχνεύουν απάτη μετά την ολοκλήρωση της συναλλαγής</li>
+  </ul>
+
+  <!-- 3. ΑΡΧΙΤΕΚΤΟΝΙΚΗ -->
+  <h2>3. Αρχιτεκτονική Συστήματος</h2>
+  <p>Το σύστημα αποτελείται από πέντε επίπεδα που επεξεργάζονται κάθε συναλλαγή σε πραγματικό χρόνο:</p>
+
+<pre>  Contactless Payment Request (NFC)
+              |
+              v
+  +-------------------------------+
+  |   DATA COLLECTION LAYER       |
+  |  Latency / Amount / Freq.     |
+  |  Device State / Location      |
+  +-------------------------------+
+              |
+       +------+------+
+       |             |
+       v             v
+  [RULE-BASED    [AI DETECTION
+   ENGINE]        ENGINE]
+  Known patterns  Isolation Forest
+  Delay checks    Random Forest
+  Freq. limits    Anomaly scores
+       |             |
+       +------+------+
+              |
+              v
+  +-------------------------------+
+  |     RISK SCORING MODULE       |
+  |  Unified Risk Score (0–100)   |
+  +-------------------------------+
+              |
+    +---------+---------+
+    |         |         |
+    v         v         v
+  ALLOW     FLAG      BLOCK
+ (&lt;30)   (30–70)    (&gt;70)
+                   + ALERT</pre>
+
+  <h3>Επίπεδο 1 — Data Collection Layer</h3>
+  <p>Συλλέγει σε πραγματικό χρόνο τα χαρακτηριστικά κάθε συναλλαγής που είναι απαραίτητα για την ανίχνευση relay attacks:</p>
+  <ul>
+    <li><strong>Transaction Latency</strong> — καθυστέρηση round-trip σε milliseconds (relay attacks εισάγουν επιπλέον καθυστέρηση)</li>
+    <li><strong>Transaction Amount</strong> — ποσό συναλλαγής (ασυνήθιστα μεγάλα ποσά σε νέο terminal)</li>
+    <li><strong>Transaction Frequency</strong> — αριθμός συναλλαγών ανά χρονικό παράθυρο</li>
+    <li><strong>Device State</strong> — κατάσταση συσκευής (screen on/off, app active, location services)</li>
+    <li><strong>Contextual Info</strong> — γεωγραφική τοποθεσία, ώρα ημέρας, merchant category</li>
+  </ul>
+
+  <h3>Επίπεδο 2 — Rule-Based Engine</h3>
+  <p>Ελέγχει για γνωστά, προκαθορισμένα patterns που υποδηλώνουν relay attack:</p>
+<pre># Παράδειγμα κανόνων:
+IF latency &gt; 300ms          → SUSPICIOUS  (relay adds ~100-500ms delay)
+IF transactions &gt; 3/minute  → SUSPICIOUS  (rapid repeated attempts)
+IF amount &gt; €500 AND
+   new_merchant = True       → SUSPICIOUS  (high value, unknown terminal)
+IF device_screen = OFF AND
+   transaction_initiated     → SUSPICIOUS  (card used without user action)</pre>
+
+  <h3>Επίπεδο 3 — AI Detection Engine</h3>
+  <p>Δύο συμπληρωματικά ML μοντέλα για ανίχνευση ανωμαλιών και ταξινόμηση:</p>
+  <ul>
+    <li><strong>Isolation Forest</strong> — unsupervised anomaly detection, εντοπίζει στατιστικά ασυνήθιστες συναλλαγές χωρίς labeled data</li>
+    <li><strong>Random Forest Classifier</strong> — supervised classification (legitimate / relay attack) με explainability μέσω feature importance</li>
+  </ul>
+<pre># AI Model Output:
+{
+  "isolation_forest_score": -0.42,   (negative = anomaly)
+  "rf_prediction":          "relay_attack",
+  "rf_confidence":          0.89,
+  "top_features": [
+    "latency_ms: 387 (threshold: 150)",
+    "tx_frequency: 5 in 60s",
+    "device_state: screen_off"
+  ]
+}</pre>
+
+  <h3>Επίπεδο 4 — Risk Scoring Module</h3>
+  <p>Συνδυάζει τα αποτελέσματα των δύο engines σε ένα ενοποιημένο <strong>risk score (0–100)</strong> χρησιμοποιώντας weighted aggregation. Ο συνδυασμός μειώνει τα false positives του AI και τα blind spots των κανόνων.</p>
+
+  <h3>Επίπεδο 5 — Decision Layer</h3>
+  <ul>
+    <li><strong>Score &lt; 30:</strong> ALLOW — η συναλλαγή προχωράει κανονικά</li>
+    <li><strong>Score 30–70:</strong> FLAG — η συναλλαγή επισημαίνεται για manual review ή επιπλέον authentication</li>
+    <li><strong>Score &gt; 70:</strong> BLOCK — η συναλλαγή αποκλείεται αυτόματα και αποστέλλεται alert</li>
+  </ul>
+
+  <!-- 4. DATASET -->
+  <h2>4. Παραγωγή Synthetic Dataset</h2>
+  <p>Λόγω της έλλειψης δημόσιων datasets για NFC relay attacks, θα παραχθεί ένα <strong>συνθετικό dataset</strong> που προσομοιώνει ρεαλιστικά σενάρια συναλλαγών. Το dataset θα αποτελείται από τρεις κατηγορίες:</p>
+
+  <table>
+    <thead><tr><th>Κατηγορία</th><th>Περιγραφή</th><th>Βασικά Χαρακτηριστικά</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Normal Transactions</strong></td>
+        <td>Φυσιολογικές ανέπαφες πληρωμές</td>
+        <td>Latency &lt;100ms, συνηθισμένα ποσά, γνωστός merchant, device screen on</td>
+      </tr>
+      <tr>
+        <td><strong>Relay Attack Scenarios</strong></td>
+        <td>Προσομοιωμένες επιθέσεις relay</td>
+        <td>Latency 200–600ms, ασυνήθιστη ώρα/τοποθεσία, screen off, rapid attempts</td>
+      </tr>
+      <tr>
+        <td><strong>Edge Cases</strong></td>
+        <td>Ακραίες αλλά νόμιμες συμπεριφορές</td>
+        <td>Ταξίδια, ασυνήθιστα μεγάλες αγορές, αργό network, νέοι merchants</td>
+      </tr>
+    </tbody>
+  </table>
+
+<pre># Παράδειγμα εγγραφής dataset:
+{
+  "tx_id":         "TX-20260415-0042",
+  "latency_ms":    387,
+  "amount_eur":    149.99,
+  "frequency_1m":  4,
+  "device_screen": "off",
+  "merchant_new":  true,
+  "hour_of_day":   2,
+  "label":         "relay_attack"
+}</pre>
+
+  <!-- 5. TECH STACK -->
+  <h2>5. Tech Stack &amp; Εργαλεία Υλοποίησης</h2>
+  <table>
+    <thead><tr><th>Layer</th><th>Τεχνολογία</th><th>Γιατί</th></tr></thead>
+    <tbody>
+      <tr><td>Γλώσσα Προγραμματισμού</td><td>Python 3.11</td><td>Κυρίαρχη γλώσσα στο ML/data science ecosystem</td></tr>
+      <tr><td>Data Manipulation</td><td>pandas, numpy</td><td>Διαχείριση και επεξεργασία δεδομένων συναλλαγών</td></tr>
+      <tr><td>ML Framework</td><td>scikit-learn</td><td>Isolation Forest, Random Forest, evaluation metrics</td></tr>
+      <tr><td>Anomaly Detection</td><td>Isolation Forest</td><td>Unsupervised ανίχνευση ασυνήθιστων συναλλαγών</td></tr>
+      <tr><td>Classification</td><td>Random Forest</td><td>Supervised ταξινόμηση με feature importance</td></tr>
+      <tr><td>Data Generation</td><td>Python (custom scripts)</td><td>Παραγωγή συνθετικού dataset με ρεαλιστικές παραμέτρους</td></tr>
+      <tr><td>Visualization</td><td>matplotlib, seaborn</td><td>ROC curves, confusion matrices, feature importance plots</td></tr>
+      <tr><td>Rule Engine</td><td>Python (custom logic)</td><td>Threshold-based κανόνες με configurable παραμέτρους</td></tr>
+      <tr><td>Evaluation</td><td>scikit-learn metrics</td><td>F1-score, precision, recall, ROC-AUC, detection latency</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 6. ML DETAILS -->
+  <h2>6. ML Μοντέλα — Σημαντικές Λεπτομέρειες</h2>
+
+  <h3>Isolation Forest — Anomaly Detection</h3>
+  <p>Ο Isolation Forest εντοπίζει anomalies χωρίς labeled data (unsupervised). Χτίζει τυχαία decision trees και μετρά πόσα splits χρειάζονται για να απομονωθεί ένα sample. Τα relay attacks δημιουργούν μοναδικά patterns (π.χ. ασυνήθιστο latency) που απομονώνονται γρήγορα — άρα λαμβάνουν χαμηλό anomaly score.</p>
+  <ul>
+    <li>Ιδανικό για αρχικό φιλτράρισμα χωρίς labeled examples</li>
+    <li>Robust σε class imbalance (relay attacks είναι σπάνια)</li>
+    <li>Γρήγορο inference — κατάλληλο για real-time ανάλυση</li>
+  </ul>
+
+  <h3>Random Forest Classifier — Classification</h3>
+  <p>Εκπαιδεύεται σε labeled συνθετικό dataset για να διακρίνει νόμιμες συναλλαγές από relay attacks. Παρέχει <strong>feature importance scores</strong> που εξηγούν γιατί μια συναλλαγή θεωρείται ύποπτη.</p>
+  <ul>
+    <li>Ensemble μέθοδος — συνδυάζει πολλά decision trees για robustness</li>
+    <li>Παρέχει probability scores αντί binary αποφάσεων</li>
+    <li>Built-in explainability μέσω feature importance (χρήσιμο για audit)</li>
+  </ul>
+
+  <table>
+    <thead><tr><th>Feature</th><th>Σημασία για Relay Detection</th></tr></thead>
+    <tbody>
+      <tr><td>Transaction Latency (ms)</td><td>Relay εισάγει 100–500ms επιπλέον καθυστέρηση λόγω wireless forwarding</td></tr>
+      <tr><td>Transaction Frequency</td><td>Πολλαπλές γρήγορες προσπάθειες υποδηλώνουν automated attack</td></tr>
+      <tr><td>Transaction Amount</td><td>Ασυνήθιστα μεγάλα ποσά σε νέους merchants αυξάνουν risk</td></tr>
+      <tr><td>Device State</td><td>Screen off κατά τη διάρκεια συναλλαγής = ύποπτο (χρήστης δεν έχει κινητό στο χέρι)</td></tr>
+      <tr><td>Merchant Familiarity</td><td>Νέος merchant + high amount = ύποπτο συνδυαστικά</td></tr>
+      <tr><td>Time of Day</td><td>Συναλλαγές τα ξημερώματα με ασυνήθιστο pattern</td></tr>
+      <tr><td>Geographic Context</td><td>Terminal σε διαφορετική χώρα από συνηθισμένη χρήση</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 7. ΑΞΙΟΛΟΓΗΣΗ -->
+  <h2>7. Αξιολόγηση &amp; Σύγκριση Συστημάτων</h2>
+  <p>Θα πραγματοποιηθεί <strong>συγκριτική αξιολόγηση</strong> τριών προσεγγίσεων στο ίδιο test dataset:</p>
+
+  <table>
+    <thead><tr><th>Μετρική</th><th>Rule-Based Only</th><th>AI-Only</th><th>Hybrid (Proposed)</th></tr></thead>
+    <tbody>
+      <tr><td>Accuracy</td><td>Υψηλή σε γνωστά patterns</td><td>Υψηλή σε σύνθετα patterns</td><td>Ισορροπημένη</td></tr>
+      <tr><td>Precision</td><td>Πολύ υψηλή</td><td>Μέτρια</td><td>Υψηλή</td></tr>
+      <tr><td>Recall</td><td>Χαμηλή (miss νέες επιθέσεις)</td><td>Υψηλή</td><td>Υψηλή</td></tr>
+      <tr><td>F1-Score</td><td>Μέτριο</td><td>Μέτριο</td><td>Υψηλό (στόχος)</td></tr>
+      <tr><td>False Positive Rate</td><td>Χαμηλό</td><td>Υψηλό</td><td>Χαμηλό</td></tr>
+      <tr><td>Detection Latency</td><td>Πολύ χαμηλό (&lt;1ms)</td><td>Μέτριο (&lt;10ms)</td><td>Χαμηλό (&lt;15ms)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Μετρικές Αξιολόγησης</h3>
+  <ul>
+    <li><strong>Accuracy &amp; F1-Score</strong> — συνολική απόδοση ανίχνευσης</li>
+    <li><strong>Precision &amp; Recall</strong> — ισορροπία μεταξύ false positives και false negatives</li>
+    <li><strong>False Positive Rate</strong> — κρίσιμο: αποκλεισμός νόμιμων συναλλαγών βλάπτει την εμπειρία χρήστη</li>
+    <li><strong>Detection Latency</strong> — ο χρόνος απόφασης πρέπει να είναι &lt;50ms για real-time χρήση</li>
+    <li><strong>ROC-AUC Curve</strong> — συνολική ικανότητα διάκρισης σε διάφορα thresholds</li>
+  </ul>
+
+  <!-- 8. TIMELINE -->
+  <h2>8. Χρονοδιάγραμμα Υλοποίησης (12 Εβδομάδες)</h2>
+  <table class="phase-table">
+    <thead><tr><th>Φάση</th><th>Εβδομάδες</th><th>Παραδοτέο</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Φάση 1</strong><br>Βιβλιογραφία &amp; Threat Modeling</td>
+        <td>1–2</td>
+        <td>Literature review, ανάλυση NFC relay attack mechanics, threat model</td>
+      </tr>
+      <tr>
+        <td><strong>Φάση 2</strong><br>Σχεδιασμός Συστήματος</td>
+        <td>3–4</td>
+        <td>Αρχιτεκτονική, ορισμός features, σχεδιασμός rule-based engine</td>
+      </tr>
+      <tr>
+        <td><strong>Φάση 3</strong><br>Dataset &amp; Υλοποίηση</td>
+        <td>5–7</td>
+        <td>Παραγωγή συνθετικού dataset, υλοποίηση rule engine, εκπαίδευση ML μοντέλων</td>
+      </tr>
+      <tr>
+        <td><strong>Φάση 4</strong><br>Αξιολόγηση &amp; Σύγκριση</td>
+        <td>8–9</td>
+        <td>Σύγκριση rule-based / AI-only / hybrid, ROC curves, feature importance analysis</td>
+      </tr>
+      <tr>
+        <td><strong>Φάση 5</strong><br>Ανάλυση &amp; Συγγραφή</td>
+        <td>10–11</td>
+        <td>Ανάλυση αποτελεσμάτων, mitigation strategies, συγγραφή πτυχιακής</td>
+      </tr>
+      <tr>
+        <td><strong>Φάση 6</strong><br>Οριστικοποίηση</td>
+        <td>12</td>
+        <td>Τελικές διορθώσεις, παρουσίαση, υποβολή</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 9. ΑΝΑΜΕΝΟΜΕΝΕΣ ΣΥΝΕΙΣΦΟΡΕΣ -->
+  <h2>9. Αναμενόμενες Συνεισφορές</h2>
+  <ul>
+    <li><strong>Νέα υβριδική αρχιτεκτονική</strong> για ανίχνευση NFC relay attacks που συνδυάζει rule-based και AI μεθόδους</li>
+    <li><strong>Simulation framework</strong> για παραγωγή και αξιολόγηση συνθετικών δεδομένων ανέπαφων πληρωμών</li>
+    <li><strong>Comparative analysis</strong> των τριών προσεγγίσεων με ποσοτικά αποτελέσματα</li>
+    <li><strong>Πρακτικές συστάσεις</strong> για βελτίωση ασφάλειας συστημάτων mobile payment</li>
+    <li><strong>Risk scoring μοντέλο</strong> με διαμορφώσιμα thresholds για διαφορετικά use cases</li>
+  </ul>
+
+  <!-- 10. GLOSSARY -->
+  <h2>10. Βασικές Έννοιες — Quick Reference</h2>
+  <table class="concept">
+    <thead><tr><th>Όρος</th><th>Εξήγηση</th></tr></thead>
+    <tbody>
+      <tr><td>NFC</td><td>Near Field Communication — ασύρματη επικοινωνία μικρής εμβέλειας (&lt;4cm), χρησιμοποιείται σε ανέπαφες πληρωμές</td></tr>
+      <tr><td>Relay Attack</td><td>Επίθεση όπου η NFC επικοινωνία αναμεταδίδεται wirelessly για να εξαπατηθεί το terminal πληρωμών</td></tr>
+      <tr><td>Isolation Forest</td><td>Unsupervised ML αλγόριθμος για ανίχνευση anomalies — αποτελεσματικός χωρίς labeled training data</td></tr>
+      <tr><td>Random Forest</td><td>Supervised ML αλγόριθμος ensemble που συνδυάζει πολλά decision trees για ταξινόμηση</td></tr>
+      <tr><td>Anomaly Detection</td><td>Εντοπισμός στατιστικά ασυνήθιστων παρατηρήσεων που αποκλίνουν από το κανονικό pattern</td></tr>
+      <tr><td>False Positive</td><td>Νόμιμη συναλλαγή που χαρακτηρίζεται λανθασμένα ως attack — βλάπτει την εμπειρία χρήστη</td></tr>
+      <tr><td>False Negative</td><td>Πραγματική επίθεση που δεν ανιχνεύεται — το πιο επικίνδυνο σφάλμα</td></tr>
+      <tr><td>Risk Score</td><td>Ενοποιημένη αριθμητική τιμή (0–100) που εκφράζει την πιθανότητα επίθεσης</td></tr>
+      <tr><td>EMV</td><td>Πρωτόκολλο πληρωμής Europay/Mastercard/Visa — διεθνές πρότυπο για chip &amp; contactless κάρτες</td></tr>
+      <tr><td>Feature Engineering</td><td>Διαδικασία επιλογής και μετατροπής των κατάλληλων χαρακτηριστικών για εκπαίδευση ML μοντέλου</td></tr>
+      <tr><td>Synthetic Dataset</td><td>Τεχνητά παραγόμενο dataset που προσομοιώνει πραγματικά δεδομένα όταν αυτά δεν είναι διαθέσιμα</td></tr>
+      <tr><td>ROC-AUC</td><td>Receiver Operating Characteristic — Area Under Curve. Μετρά πόσο καλά διαχωρίζει ένα μοντέλο τις κλάσεις σε όλα τα thresholds</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    Έγγραφο προετοιμασμένο για παρουσίαση στον Παναγιώτη Ηλία — CUT, Απρίλιος 2026
+  </div>
+
+</div>
+</body>
+</html>
