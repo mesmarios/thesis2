@@ -424,6 +424,174 @@ IF device_screen = OFF AND
     </tbody>
   </table>
 
+  <!-- THEMA 2 -->
+  <div class="cover">
+    <div class="uni">Τμήμα Μηχανικής Ηλεκτρονικών Υπολογιστών, Τηλεπικοινωνιών και Πληροφορικής</div>
+    <div class="uni">Πανεπιστήμιο Τεχνολογίας Κύπρου (CUT)</div>
+    <div class="label">Πρόταση Πτυχιακής Εργασίας - ΘΕΜΑ 2</div>
+    <h1>ML-Augmented Detection and Evasion<br>of Browser Fingerprinting Techniques</h1>
+    <div class="meta">
+      Φοιτητής: &nbsp;<strong>Marios Mesaritis</strong><br>
+      Επιβλέπων Καθηγητής: &nbsp;<strong>Δρ. Παναγιώτης Ηλία</strong><br>
+      Απρίλιος 2026
+    </div>
+  </div>
+
+  <h2>ΘΕΜΑ 2 - Σύνοψη Πρότασης</h2>
+  <p>Το Θέμα 2 εστιάζει στην ανίχνευση και αποφυγή browser fingerprinting με συνδυασμό <strong>heuristic τεχνικών και ML</strong>. Κεντρική ιδέα είναι η επέκταση των framework Carnus/Chronos/Human Touch/Simulacrum με ένα νέο ML επίπεδο που θα λειτουργεί τόσο για detection όσο και για robust defense.</p>
+  <div class="quote">"Από rule-based signatures σε ML-based γενίκευση: στόχος είναι η ανίχνευση νέων και εξελισσόμενων fingerprinting τεχνικών, με χαμηλό web breakage."</div>
+
+  <h2>1. Εισαγωγή και Κίνητρο</h2>
+  <p>Το browser fingerprinting είναι stateless τεχνική παρακολούθησης που συνθέτει μοναδικό αναγνωριστικό από στοιχεία όπως canvas, WebGL, fonts, AudioContext, storage και behavioral signals. Με τη σταδιακή μείωση των third-party cookies, οι trackers χρησιμοποιούν περισσότερο fingerprinting, first-party cookie ghost-writing και service worker abuse.</p>
+  <p>Η ερευνητική γραμμή του Δρ. Ηλία αποτελεί σημείο αναφοράς διεθνώς στο extension fingerprinting και web tracking. Ωστόσο, τα περισσότερα συστήματα παραμένουν <strong>heuristic/rule-based</strong>, άρα υπάρχει ευκαιρία για ML γενίκευση και ανθεκτικότητα απέναντι σε obfuscation και evasive tactics.</p>
+
+  <h2>2. Βασικά Ευρήματα από την Υφιστάμενη Βιβλιογραφία</h2>
+  <table>
+    <thead>
+      <tr><th>Εργασία</th><th>Κύριο αποτέλεσμα</th><th>Κενό που μένει</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Carnus (NDSS 2020)</strong></td>
+        <td>Μεγάλης κλίμακας extension fingerprinting με WAR/behavior signatures και 29K+ μοναδικά extensions.</td>
+        <td>Exact signature matching, περιορισμένη γενίκευση σε παραλλαγές.</td>
+      </tr>
+      <tr>
+        <td><strong>Human Touch (USENIX 2022)</strong></td>
+        <td>Αποδεικνύει ότι user-triggered interactions αποκαλύπτουν επιπλέον extension fingerprints.</td>
+        <td>Χειροκίνητα templates, περιορισμένη κάλυψη σύνθετων interaction chains.</td>
+      </tr>
+      <tr>
+        <td><strong>Chronos (CCS 2022)</strong></td>
+        <td>Continuous fingerprinting με MutationObserver streams και σημαντική αύξηση ανίχνευσης.</td>
+        <td>Παραμένει heuristic pipeline, ευαισθησία σε noise/collisions.</td>
+      </tr>
+      <tr>
+        <td><strong>Sleeper Agents (NDSS 2021)</strong></td>
+        <td>Service workers μπορούν να χρησιμοποιηθούν για history sniffing και privacy leakage.</td>
+        <td>Manual rules, χωρίς αυτόματη ML διάκριση benign/malicious patterns.</td>
+      </tr>
+      <tr>
+        <td><strong>Cookie Swap Party (WWW 2021)</strong></td>
+        <td>First-party cookies από third-party JS χρησιμοποιούνται εκτεταμένα για tracking.</td>
+        <td>Heuristic identifier matching με όρια σε σύνθετα encodings.</td>
+      </tr>
+      <tr>
+        <td><strong>Simulacrum (USENIX 2022)</strong></td>
+        <td>DOM reality shifting για αποτροπή extension fingerprinting.</td>
+        <td>Ισχυρή άμυνα αλλά όχι ML-driven adaptive detection.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3. Ερευνητικό Κενό που Καλύπτει το Θέμα 2</h2>
+  <ul>
+    <li>Απουσία εξειδικευμένου <strong>ML detector για extension behavioral fingerprinting</strong>.</li>
+    <li>Περιορισμένη χρήση unsupervised discovery για νέα/άγνωστα fingerprinting vectors.</li>
+    <li>Ελλιπής adversarial αξιολόγηση των υπαρχόντων detection pipelines.</li>
+    <li>Έλλειψη ενιαίου εργαλείου που ενώνει detection + defense + privacy-preserving model updates.</li>
+  </ul>
+
+  <h2>4. Ερευνητικά Ερωτήματα</h2>
+  <ul>
+    <li><strong>ΕΕ1:</strong> Μπορεί ML να ταξινομεί fingerprinting scripts/traces με υψηλή ακρίβεια και robust συμπεριφορά σε obfuscation;</li>
+    <li><strong>ΕΕ2:</strong> Μπορεί unsupervised learning να ανακαλύπτει νέα fingerprinting clusters πέρα από γνωστές signatures;</li>
+    <li><strong>ΕΕ3:</strong> Πόσο ευάλωτοι είναι οι detectors σε evasive tactics (WASM μεταφορά, perturbations, timing evasion);</li>
+    <li><strong>ΕΕ4:</strong> Μπορεί να υλοποιηθεί πρακτικό browser countermeasure με on-device ML inference και χαμηλό breakage;</li>
+  </ul>
+
+  <h2>5. Προτεινόμενη Μεθοδολογία</h2>
+  <pre>Data Collection (OpenWPM + Honeypage + Extension traces)
+            |
+            v
+Feature Views: AST | Execution Traces | Mutation Streams | Graph Flows
+            |
+            v
+Supervised Models (RF/XGBoost/CNN/Transformer)
+            |
+            v
+Unsupervised Discovery (DBSCAN/OPTICS/Isolation Forest)
+            |
+            v
+Adversarial Evasion Evaluation (WASM + FGSM/PGD + timing)
+            |
+            v
+Defense Prototype: SpectralShield (client-side ML + DOM shifting)</pre>
+
+  <h3>Στάδιο 1 - Dataset</h3>
+  <p>Συλλογή δεδομένων από Tranco/OpenWPM και extension-focused traces (Carnus/Chronos λογική), με multi-class labels: canvas/webgl/audio/font FP, extension behavioral FP, first-party cookie abuse, service worker abuse, legitimate.</p>
+
+  <h3>Στάδιο 2 - Feature Engineering</h3>
+  <ul>
+    <li><strong>Syntactic:</strong> AST tokens, API frequencies.</li>
+    <li><strong>Semantic:</strong> execution trace sequences με context.</li>
+    <li><strong>Behavioral:</strong> MutationObserver records σε χρονική ακολουθία.</li>
+    <li><strong>Graph:</strong> script-storage-network information flows.</li>
+  </ul>
+
+  <h3>Στάδιο 3 - Supervised Detection</h3>
+  <p>Σύγκριση Random Forest, XGBoost, 1D-CNN και Transformer/bytecode model με μετρικές Accuracy, Precision, Recall, F1, FPR, και breakage rate.</p>
+
+  <h3>Στάδιο 4 - Unsupervised Discovery</h3>
+  <p>Clustering και anomaly detection για εντοπισμό unknown fingerprinting patterns που δεν ταιριάζουν σε γνωστές signatures.</p>
+
+  <h3>Στάδιο 5 - Evasion/Adversarial Study</h3>
+  <ul>
+    <li>WASM-based μεταφορά fingerprinting λογικής.</li>
+    <li>Feature perturbations (FGSM/PGD) σε embeddings.</li>
+    <li>Mutation/order/timing perturbations για αποφυγή instrumentation.</li>
+  </ul>
+
+  <h3>Στάδιο 6 - Defense Prototype (SpectralShield)</h3>
+  <p>Browser extension με quantized on-device model (ONNX Runtime Web), που ενεργοποιεί Simulacrum-style DOM reality shifting όταν ανιχνεύεται fingerprinting script.</p>
+
+  <h2>6. Χρονοδιάγραμμα 12 Μηνών</h2>
+  <table class="phase-table">
+    <thead><tr><th>Μήνες</th><th>Εργασία</th><th>Παραδοτέο</th></tr></thead>
+    <tbody>
+      <tr><td>1-2</td><td>Βιβλιογραφία + setup υποδομών</td><td>Baseline crawler/instrumentation</td></tr>
+      <tr><td>3</td><td>Feature engineering + labeling</td><td>Αρχικό training dataset</td></tr>
+      <tr><td>4-5</td><td>Supervised classification</td><td>Σύγκριση μοντέλων detection</td></tr>
+      <tr><td>6</td><td>Unsupervised/anomaly discovery</td><td>Νέα suspicious clusters</td></tr>
+      <tr><td>7-8</td><td>Adversarial evasion experiments</td><td>Robustness report</td></tr>
+      <tr><td>9-10</td><td>SpectralShield implementation</td><td>Prototype extension</td></tr>
+      <tr><td>11</td><td>Benchmarking + μικρό user study</td><td>Τελικές μετρικές απόδοσης</td></tr>
+      <tr><td>12</td><td>Συγγραφή και προετοιμασία παρουσίασης</td><td>Ολοκληρωμένη πτυχιακή</td></tr>
+    </tbody>
+  </table>
+
+  <h2>7. Κύριες Καινοτομίες</h2>
+  <ol>
+    <li>Πρώτο ML-focused πλαίσιο ειδικά για extension behavioral fingerprinting.</li>
+    <li>Anomaly detection πάνω σε mutation streams για zero-day discovery.</li>
+    <li>Συστηματική adversarial αξιολόγηση πάνω σε Ilia-style frameworks.</li>
+    <li>Ενοποιημένη άμυνα: detection + DOM shifting + robust retraining.</li>
+    <li>Ενιαίο multi-vector pipeline για scripts, extensions, cookies και service workers.</li>
+  </ol>
+
+  <h2>8. Αναμενόμενα Αποτελέσματα</h2>
+  <ul>
+    <li>Reproducible dataset και ανοικτό pipeline για ακαδημαϊκή χρήση.</li>
+    <li>Σαφής σύγκριση 3-4 ML αρχιτεκτονικών με κοινό benchmark.</li>
+    <li>Ποσοτικοποίηση πτώσης απόδοσης υπό evasion και βελτίωση με adversarial training.</li>
+    <li>Prototype του <strong>SpectralShield</strong> με στόχο χαμηλό runtime overhead.</li>
+    <li>Υλικό κατάλληλο για submission σε workshop/venue privacy-security.</li>
+  </ul>
+
+  <h2>9. Συνάφεια με SPT@CUT</h2>
+  <p>Το θέμα συνδέεται άμεσα με τις ερευνητικές κατευθύνσεις του SPT@CUT (web security, privacy, browser fingerprinting, tracking, security-AI intersection) και με το μάθημα CEI529 Web Security and Privacy. Η πρόταση επεκτείνει οργανικά προηγούμενες δημοσιεύσεις του επιβλέποντα με σύγχρονες ML τεχνικές.</p>
+
+  <h2>10. Συνοπτική Βιβλιογραφική Βάση</h2>
+  <table>
+    <thead><tr><th>Κατηγορία</th><th>Αναφορές που αξιοποιούνται</th></tr></thead>
+    <tbody>
+      <tr><td>Extension FP</td><td>Carnus (NDSS 2020), Human Touch (USENIX 2022), Chronos (CCS 2022), Simulacrum (USENIX 2022)</td></tr>
+      <tr><td>Web Tracking</td><td>Sleeper Agents (NDSS 2021), Cookie Swap Party (WWW 2021), CookieGraph</td></tr>
+      <tr><td>ML Detection</td><td>FP-Inspector, FP-Radar, WebGraph, FP-Fed, FP-tracer</td></tr>
+      <tr><td>Adversarial/Evasion</td><td>FP-Inconsistent, WASM Cloak, ByteDefender, Beyond the Crawl</td></tr>
+    </tbody>
+  </table>
+
   <div class="footer">
     Έγγραφο προετοιμασμένο για παρουσίαση στον Παναγιώτη Ηλία — CUT, Απρίλιος 2026
   </div>
