@@ -592,6 +592,116 @@ Defense Prototype: SpectralShield (client-side ML + DOM shifting)</pre>
     </tbody>
   </table>
 
+  <!-- THEMA 3 -->
+  <div class="cover">
+    <div class="uni">Τμήμα Μηχανικής Ηλεκτρονικών Υπολογιστών, Τηλεπικοινωνιών και Πληροφορικής</div>
+    <div class="uni">Πανεπιστήμιο Τεχνολογίας Κύπρου (CUT)</div>
+    <div class="label">Πρόταση Πτυχιακής Εργασίας - ΘΕΜΑ 3</div>
+    <h1>Ανίχνευση Cryptojacking στον Browser<br>μέσω Behavioral Analysis<br>και Machine Learning</h1>
+    <div class="meta">
+      Φοιτητής: &nbsp;<strong>Marios Mesaritis</strong><br>
+      Επιβλέπων Καθηγητής: &nbsp;<strong>Δρ. Παναγιώτης Ηλία (SPT@CUT)</strong><br>
+      Απρίλιος 2026
+    </div>
+  </div>
+
+  <h2>ΘΕΜΑ 3 - Σύνοψη Πρότασης</h2>
+  <p>Η πρόταση εστιάζει στην ανίχνευση cryptojacking σε πραγματικό χρόνο μέσα στον browser, συνδυάζοντας behavioral analysis και ML. Χτίζει πάνω στην εργασία του επιβλέποντα <strong>"Truth in Web Mining"</strong> (ISC 2019), μεταφέροντας τη μελέτη από measurement-only σε πρακτικό detection/defense pipeline.</p>
+  <div class="quote">"Από το πόσο κοστίζει το cryptojacking στον χρήστη, στο πώς το εντοπίζουμε αξιόπιστα και έγκαιρα όταν είναι obfuscated ή WASM-based."</div>
+
+  <h2>1. Εισαγωγή και Σχέση με SPT@CUT</h2>
+  <p>Το cryptojacking χρησιμοποιεί τους πόρους του θύματος (CPU/GPU, ενέργεια, θερμοκρασία, απόκριση συστήματος) για εξόρυξη κρυπτονομισμάτων χωρίς συγκατάθεση. Η προηγούμενη γραμμή έρευνας του Δρ. Ηλία ποσοτικοποίησε το overhead και την κερδοφορία του φαινομένου, με βασικό εύρημα ότι η επίθεση γίνεται κερδοφόρα όταν ο χρήστης παραμένει πάνω από <strong>5.53 λεπτά</strong> στο site.</p>
+  <p>Το Θέμα 3 επεκτείνει αυτή τη βάση σε σύγχρονο πλαίσιο 2025+, όπου η δραστηριότητα μετατοπίζεται προς obfuscated scripts, WASM payloads και supply-chain injection σε third-party resources.</p>
+
+  <h2>2. Το Πρόβλημα Σήμερα</h2>
+  <ul>
+    <li><strong>Obfuscation gap:</strong> σημαντικό ποσοστό cryptojacking scripts είναι obfuscated, άρα τα blacklist/AV μοντέλα αποτυγχάνουν συχνά.</li>
+    <li><strong>WASM gap:</strong> mining μέσω WebAssembly είναι δυσκολότερο να εντοπιστεί με κλασική static ανάλυση JS.</li>
+    <li><strong>Generalization gap:</strong> rule-based μηχανισμοί δεν γενικεύουν σε νέες παραλλαγές και evasive στρατηγικές.</li>
+    <li><strong>Behavioral gap:</strong> πολλά υπάρχοντα ML μοντέλα βασίζονται σε λίγα coarse features και όχι σε browser API-level behavior.</li>
+  </ul>
+
+  <h2>3. Προτεινόμενη Μεθοδολογία</h2>
+  <pre>Stage 1: Measurement Study (OpenWPM crawl, Tranco Top-5000)
+          |
+          v
+Stage 2: ML Classifier (runtime + static/WASM features)
+          |
+          v
+Stage 3: Browser Extension PoC (real-time client-side detection)</pre>
+
+  <h3>Στάδιο 1 - Measurement Study</h3>
+  <p>Automated crawl σε Tranco Top-5000 με OpenWPM και συλλογή μετρήσεων: CPU usage ανά tab, ενεργά WebWorkers, κλήσεις `WebAssembly.instantiate()`, outbound requests προς mining pools και πιθανό throttling behavior.</p>
+  <p>Παραδοτέο: ενημερωμένο labeled dataset (`cryptojacking` / `legitimate`) που επεκτείνει πρακτικά το measurement scope του 2019.</p>
+
+  <h3>Στάδιο 2 - ML Detection Model</h3>
+  <table>
+    <thead><tr><th>Ομάδα Features</th><th>Χαρακτηριστικά</th><th>Στόχος</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Runtime Behavioral</strong></td>
+        <td>CPU spike/sustain patterns, πλήθος WebWorkers, memory allocation trends, traffic προς mining pools</td>
+        <td>Ανίχνευση ενεργού mining συμπεριφοράς</td>
+      </tr>
+      <tr>
+        <td><strong>Static Script/WASM</strong></td>
+        <td>AST API sequences, call frequencies, WASM signatures/sections</td>
+        <td>Αναγνώριση κακόβουλων μοτίβων πριν ή κατά την εκτέλεση</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>Μοντέλα προς σύγκριση: Random Forest, XGBoost και lightweight Neural Network. Στόχος απόδοσης: <strong>&gt;97% accuracy</strong> και <strong>&lt;2% false positives</strong>.</p>
+
+  <h3>Στάδιο 3 - Browser Extension Proof of Concept</h3>
+  <p>Υλοποίηση Chrome/Firefox extension που τρέχει inference client-side σχεδόν σε πραγματικό χρόνο. Το extension κάνει hook σε WASM instantiation events και συνδυάζει timing-based indicators για runtime behavior tracking.</p>
+  <ul>
+    <li>Alert όταν εντοπιστεί ύποπτο cryptojacking μοτίβο.</li>
+    <li>Επιλογή χρήστη: block script ή επιτρεπτό opt-in mining.</li>
+    <li>Demo-able εργαλείο για τελική παρουσίαση.</li>
+  </ul>
+
+  <h2>4. Καινοτομία σε σχέση με τη Γραμμή 2019</h2>
+  <ol>
+    <li>Μετάβαση από profitability/overhead measurement σε <strong>real-time ML detection</strong>.</li>
+    <li>Ενσωμάτωση behavioral + static/WASM χαρακτηριστικών σε ενιαίο pipeline.</li>
+    <li>Εστίαση σε obfuscated και WASM-based miners που διαφεύγουν από rule-based λύσεις.</li>
+    <li>Παραγωγή browser extension PoC με άμεσο πρακτικό αντίκτυπο για τον χρήστη.</li>
+  </ol>
+
+  <h2>5. Εργαλεία Υλοποίησης</h2>
+  <table>
+    <thead><tr><th>Πεδίο</th><th>Εργαλεία</th><th>Ρόλος</th></tr></thead>
+    <tbody>
+      <tr><td>Crawling/Measurement</td><td>OpenWPM, Python</td><td>Αυτοματοποιημένο browsing και συλλογή σημάτων</td></tr>
+      <tr><td>ML Pipeline</td><td>scikit-learn, XGBoost, PyTorch</td><td>Εκπαίδευση και αξιολόγηση classifiers</td></tr>
+      <tr><td>Static Analysis</td><td>Esprima ή Babel</td><td>AST parsing και extraction API-level features</td></tr>
+      <tr><td>WASM Analysis</td><td>wabt</td><td>Εξαγωγή signatures από WASM binaries</td></tr>
+      <tr><td>Extension</td><td>JavaScript (Chrome/Firefox APIs)</td><td>Real-time detection και response στον browser</td></tr>
+    </tbody>
+  </table>
+
+  <h2>6. Χρονοδιάγραμμα 12 Μηνών</h2>
+  <table class="phase-table">
+    <thead><tr><th>Μήνες</th><th>Δραστηριότητα</th><th>Παραδοτέο</th></tr></thead>
+    <tbody>
+      <tr><td>1-2</td><td>Βιβλιογραφία + setup OpenWPM</td><td>Research baseline και πειραματικό περιβάλλον</td></tr>
+      <tr><td>3-4</td><td>Crawl και συλλογή δεδομένων</td><td>Labeled measurement dataset</td></tr>
+      <tr><td>5</td><td>Feature engineering και labeling refinement</td><td>Training-ready feature matrix</td></tr>
+      <tr><td>6-7</td><td>Εκπαίδευση/αξιολόγηση ML μοντέλων</td><td>Best-performing detector</td></tr>
+      <tr><td>8-9</td><td>Υλοποίηση browser extension</td><td>PoC με real-time alerts</td></tr>
+      <tr><td>10-11</td><td>Σύγκριση με baseline εργαλεία (Outguard/CMTracker)</td><td>Benchmark report</td></tr>
+      <tr><td>12</td><td>Συγγραφή και τελική παρουσίαση</td><td>Ολοκληρωμένη διπλωματική</td></tr>
+    </tbody>
+  </table>
+
+  <h2>7. Αναμενόμενα Αποτελέσματα</h2>
+  <ul>
+    <li>Επικαιροποιημένη μέτρηση cryptojacking στο σύγχρονο web περιβάλλον.</li>
+    <li>ML detector υψηλής ακρίβειας με χαμηλό false positive rate.</li>
+    <li>Πρακτικό extension για client-side προστασία και ενημέρωση χρήστη.</li>
+    <li>Σαφής συνεισφορά ευθυγραμμισμένη με το portfolio του SPT@CUT σε web security/privacy.</li>
+  </ul>
+
   <div class="footer">
     Έγγραφο προετοιμασμένο για παρουσίαση στον Παναγιώτη Ηλία — CUT, Απρίλιος 2026
   </div>
